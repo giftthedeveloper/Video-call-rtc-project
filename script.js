@@ -37,8 +37,22 @@ const init = async() => {
 
 }
 
-const handleMessageFromPeer= async (message, memberId) => {
+const handleMessageFromPeer= async (message, MemberId) => {
     message = JSON.parse(message.text)
+
+    if(message.type === 'offer') {
+        createAnswer(MemberId, message.offer)
+    }
+
+    if(message.type === 'answer') {
+        addAnswer(message.answer)
+    }
+
+    if(message.type === 'candidate') {
+        if(peerConnection) {
+            peerConnection.addIceCandidate(message.candidate)
+        }
+    }
     console.log('Message: ', message)
 
 }
@@ -50,9 +64,9 @@ const handleUserJoined = async(MemberId)=> {
     console.log("called the function")
 }
 
-let createPeerConnection  = async (MemberId) => {
+const createPeerConnection  = async (MemberId) => {
 
-    const peerConnection = new RTCPeerConnection(servers)
+    peerConnection = new RTCPeerConnection(servers)
 
     const remoteStream = new MediaStream()
     document.getElementById('client-2').srcObject = remoteStream
@@ -95,10 +109,21 @@ const createOffer = async (MemberId) => {
     // console.log('Offer:', offer)
 }
 
-let createAnswer = async (MemberId) => {
+const createAnswer = async (MemberId, offer) => {
     await createPeerConnection(MemberId)
+
+    await peerConnection.setRemoteDescription(offer)
+
+    const answer = await peerConnection.createAnswer()
+    await peerConnection.setLocalDescription(answer)
+    client.sendMessageToPeer({text: JSON.stringify({'type': 'answer', 'answer': answer})}, MemberId)
 
 }
 
+const addAnswer = async(answer) => {
+    if(!peerConnection.currentRemoteDescription) {
+        peerConnection.setRemoteDescription(answer)
+    }
+}
 
 init()

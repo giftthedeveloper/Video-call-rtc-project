@@ -10,3 +10,8 @@
     height: 500px;
 
 }
+
+#client-2{
+    /* //to hide user until user2 joins */
+    display: none;
+}
