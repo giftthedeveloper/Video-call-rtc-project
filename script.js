@@ -50,7 +50,7 @@ const handleUserJoined = async(MemberId)=> {
     console.log("called the function")
 }
 
-let createPeerConnection  = async (memberId) => {
+let createPeerConnection  = async (MemberId) => {
 
     const peerConnection = new RTCPeerConnection(servers)
 
@@ -82,36 +82,11 @@ let createPeerConnection  = async (memberId) => {
     }
 
 }
+
 //create sdp offer for peer connection
 const createOffer = async (MemberId) => {
-    // const peerConnection = new RTCPeerConnection(servers)
 
-    // const remoteStream = new MediaStream()
-    // document.getElementById('client-2').srcObject = remoteStream
-
-    // if (!localStream) {
-    //     localStream = await navigator.mediaDevices.getUserMedia({video:true, audio:false}) //change the audio back to true when testing with another device
-    //     console.log("checking localstream")
-    //     document.getElementById('client-1').srcObject = localStream
-
-    // }
-    // localStream.getTracks().forEach((track) => {
-    //     peerConnection.addTrack(track, localStream)
-    // })
-
-    // peerConnection.ontrack = (event) => {
-    //     event.streams[0].getTracks().forEach((track) => {
-    //         remoteStream.addTrack(track)
-    //     })
-    // }
-
-    peerConnection.onicecandidate = async (event) => {
-        if(event.candidate) {
-            //websocket to send icecandidates
-            client.sendMessageToPeer({text: JSON.stringify({'type': 'candidate', 'candidate': event.candidate})}, MemberId)
-
-        }
-    }
+    await createPeerConnection(MemberId)
 
     const offer = await peerConnection .createOffer()
     await peerConnection.setLocalDescription(offer)
@@ -120,7 +95,8 @@ const createOffer = async (MemberId) => {
     // console.log('Offer:', offer)
 }
 
-let createAnswer = async (memberId) => {
+let createAnswer = async (MemberId) => {
+    await createPeerConnection(MemberId)
 
 }
 
