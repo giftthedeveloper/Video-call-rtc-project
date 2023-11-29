@@ -23,6 +23,7 @@ const init = async() => {
     await channel.join()
 
     channel.on('MemberJoined', handleUserJoined)
+    channel.on('MemberLeft', handleUserLeft)
     client.on('MessageFromPeer', handleMessageFromPeer)
 
 
@@ -35,6 +36,10 @@ const init = async() => {
     // console.log("called the function")
 
 
+}
+
+const handleUserLeft = async (MemberId) => {
+    document.getElementById('client-2').style.display = 'none'
 }
 
 const handleMessageFromPeer= async (message, MemberId) => {
@@ -70,6 +75,8 @@ const createPeerConnection  = async (MemberId) => {
 
     const remoteStream = new MediaStream()
     document.getElementById('client-2').srcObject = remoteStream
+    document.getElementById('client-2').style.display = 'block'
+
 
     if (!localStream) {
         localStream = await navigator.mediaDevices.getUserMedia({video:true, audio:false}) //change the audio back to true when testing with another device
@@ -126,4 +133,10 @@ const addAnswer = async(answer) => {
     }
 }
 
+const leaveChannel = async () => {
+    await channel.leave()
+    await client.logout()
+}
+
+window.addEventListener('beforeunload', leaveChannel)
 init()
