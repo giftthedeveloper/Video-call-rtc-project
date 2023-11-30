@@ -2,10 +2,20 @@ let localStream;
 const app_id = "438b0a9bb09b4df992cad2765963018d"
 const token = null; 
 const uid = String(Math.floor(Math.random() * 10000 ))
+
+
 let client
 // let client;
 let channel;
 // const client = await AgoraRTM.createInstance(app_id)
+
+let queryString = window.location.search
+let urlParams = new URLSearchParams(queryString)
+let roomId = urlParams.get('room')
+
+if (!roomId){
+    window.location = 'lobby.html'
+}
 const servers = {
     iceServers:[
         {
@@ -18,8 +28,8 @@ const init = async() => {
     client = await AgoraRTM.createInstance(app_id)
     await client.login({uid, token})
 
-    // channel = client.createChannel(roomID)
-    channel = client.createChannel('main')
+    channel = client.createChannel(roomId)
+    // channel = client.createChannel('main')
     await channel.join()
 
     channel.on('MemberJoined', handleUserJoined)
