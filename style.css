@@ -1,34 +1,28 @@
-*{
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-#videos{
+#videos {
     display: grid;
     grid-template-columns: 1fr;
     height: 100%;
     overflow: hidden;
-
-    /* grid-template-columns: 1fr 1fr; */
-    /* gap: 2em; */
 }
 
-.video-player{
+.video-player {
     background-color: black;
     width: 100%;
     height: 100%;
     object-fit: cover;
-
 }
 
-#client-2{
-    /* //to hide user until user2 joins */
+#client-2 {
     display: none;
-
 }
 
-.small-frame{
+.small-frame {
     position: fixed;
     top: 20px;
     left: 20px;
@@ -36,13 +30,12 @@
     width: 300px;
     border-radius: 5px;
     border: 2px solid #b366f9;
-    -webkit-box-shadow: 3px 3px 15px -1px rgba(0, 0, 0, .77);
-    box-shadow: 3px 3px 15px -1px rgba(0, 0, 0, .77);
-    z-index: 999
-
+    -webkit-box-shadow: 3px 3px 15px -1px rgba(0, 0, 0, 0.77);
+    box-shadow: 3px 3px 15px -1px rgba(0, 0, 0, 0.77);
+    z-index: 999;
 }
 
-.control-container{
+.control-container {
     background-color: rgb(179, 102, 249, .9);
     padding: 20px;
     border-radius: 50%;
@@ -50,39 +43,90 @@
     justify-content: center;
     align-items: center;
     cursor: pointer;
-
 }
 
-.control-container img{
+.control-container img {
     height: 30px;
     width: 30px;
-
 }
 
-#leave-btn{
+#leave-btn {
     background-color: rgb(255, 80, 80, 1);
 }
 
-#controls{
+#controls {
     position: fixed;
     bottom: 20px;
     left: 50%;
-    transform: translateX(-50);
+    transform: translateX(-50%);
     display: flex;
     gap: 1em;
 }
 
-@media screen and (max-width:600px) {
-    .small-frame{
-        height: 80px;
-        width:120px;
+.pop-up {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 10px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    text-align: center;
+}
 
+.pop-up-content {
+    position: relative;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: small;
+    display: flex;
+    flex-direction: column;  
+    align-items: center;     
+    justify-content: center; 
+   
+}
+
+.close-btn-container {
+    position: absolute;
+    top: -7px;
+    right: -7px;
+}
+
+.close-btn {
+    background-color: rgb(255, 80, 80);
+    color: white; 
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.pop-up-content > h4 {
+    margin-top: 20px; 
+}
+
+@media screen and (max-width: 600px) {
+    .small-frame {
+        height: 80px;
+        width: 120px;
     }
 
-    .control-container img{
+    .control-container img {
         height: 20px;
         width: 20px;
     }
 
-    
+    #controls {
+        bottom: 10px;
+    }
+
+    #videos {
+        grid-template-columns: 1fr;
+    }
+
+    .pop-up {
+        height: auto;
+        width: 80%;
+    }
 }

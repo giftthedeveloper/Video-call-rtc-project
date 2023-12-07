@@ -1,24 +1,20 @@
-
     let localStream;
     const app_id = "438b0a9bb09b4df992cad2765963018d"
     const token = null; 
     const uid = String(Math.floor(Math.random() * 10000 ))
-    
-    
     let client
-    // let client;
     let channel;
-    // const client = await AgoraRTM.createInstance(app_id)
-    
     let queryString = window.location.search
     let urlParams = new URLSearchParams(queryString)
     let roomId = urlParams.get('room')
-    
+    // const io = require('socket.io-client');    
+    let audioTrack
+
+
+// const socket = io('https://api-video-call-by-gift.onrender.com');
     if (!roomId){
         window.location = 'lobby.html'
     }
-
-    //connect google ice servers to your backend application
     const servers = {
         iceServers:[
             {
@@ -28,7 +24,34 @@
     }
     
     const init = async() => {
-        //backend
+        // socket.on('connect', () => {
+        //     socket.emit('joinRoom', { room: roomId});
+        //     console.log(`Connected as ${userId}`);
+        //   });
+
+        // socket.on('disconnect', () => {
+        // console.log('Disconnected from the WebSocket server');
+        // });
+        
+        // socket.on('error', (error) => {
+        // console.error('WebSocket error:', error);
+        // });
+          
+        // // channel = client.createChannel(roomId)
+        // // channel = client.createChannel('main')
+        // // await channel.join()
+    
+        // socket.on('MemberJoined', () => {
+
+        // })
+
+        // socket.on('MemberLeft', () => {
+
+        // })
+        // socket.on('MessageFromPeer', () => {
+
+        // })
+    
         client = await AgoraRTM.createInstance(app_id)
         await client.login({uid, token})
     
@@ -40,17 +63,78 @@
         channel.on('MemberLeft', handleUserLeft)
         client.on('MessageFromPeer', handleMessageFromPeer)
     
-    
-        localStream = await navigator.mediaDevices.getUserMedia({video:true, audio:false}) //change the audio back to true when testing with another device
-        console.log("here")
+        localStream = await navigator.mediaDevices.getUserMedia({video:true, audio:true}) 
         document.getElementById('client-1').srcObject = localStream
         
         
         // createOffer()
         // console.log("called the function")
-    
+        createPopUp();
+        console.log('pop up done')
     
     }
+
+
+    const closePopUp = () => {
+        console.log("Closing pop-up");
+        const popUp = document.querySelector('.pop-up');
+        console.log("here in pop up also")
+        if (popUp) {
+            console.log("here in pop up")
+            popUp.remove();
+        }
+    };
+    
+    
+    
+
+    const createPopUp = () => {
+        const popUp = document.createElement('div');
+        popUp.className = 'pop-up';
+    
+        const popUpContent = document.createElement('div');
+        popUpContent.className = 'pop-up-content';
+    
+        const closeBtnContainer = document.createElement('div');
+        closeBtnContainer.className = 'close-btn-container';
+    
+        const closeBtn = document.createElement('button');
+        closeBtn.className = 'close-btn';
+        closeBtn.innerHTML = '&times;';
+        console.log("Close button: ", closeBtn);
+        closeBtn.addEventListener('click', closePopUp);
+
+        // Add closeBtn directly to popUpContent
+        popUpContent.appendChild(closeBtn);
+
+        popUp.appendChild(popUpContent);
+
+        closeBtnContainer.appendChild(closeBtn);
+    
+        popUpContent.appendChild(closeBtnContainer);
+    
+        popUpContent.innerHTML += `
+            
+            <h4>This video call currently supports only 2 participants.</h4>
+            <p>Share the following link to invite others:</p>
+            <input type="text" id="meeting-link" value="${window.location.href}" readonly>
+            <button onclick="copyMeetingLink()">Copy Link</button>
+        `;
+    
+        popUp.appendChild(popUpContent);
+    
+        document.body.appendChild(popUp);
+    };
+    
+    
+    // window.addEventListener('beforeunload', closePopUp);
+
+    window.copyMeetingLink = () => {
+        const meetingLinkInput = document.getElementById('meeting-link');
+        meetingLinkInput.select();
+        document.execCommand('copy');
+        alert('Meeting link copied to clipboard!');
+    };
     
     const handleUserLeft = async (MemberId) => {
         document.getElementById('client-2').style.display = 'none'
@@ -98,7 +182,7 @@
 
     
         if (!localStream) {
-            localStream = await navigator.mediaDevices.getUserMedia({video:true, audio:true}) //change the audio back to true when testing with another device
+            localStream = await navigator.mediaDevices.getUserMedia({video:true, audio:true}) 
             console.log("checking localstream")
             document.getElementById('client-1').srcObject = localStream
     
@@ -171,7 +255,7 @@
     }
 
     const toggleMic = async () => {
-        let audioTrack = localStream.getTracks().find(track => track.kind === 'audio')
+        audioTrack = localStream.getTracks().find(track => track.kind === 'audio')
     
         if(audioTrack.enabled){
             audioTrack.enabled = false
