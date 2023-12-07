@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Lobby</title>
+    <link rel="stylesheet" href="lobby-style.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #2c3e50; /* Dark background color */
+            color: #ecf0f1; /* Light text color */
+        }
+
+        #lobby-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            /* height: 100vh; */
+            min-height: 100vh; /* Set minimum height to full viewport height */
+            margin-bottom: -50px; 
+        }
+
+        #join-form {
+            background-color: #34495e; /* Darker form background color */
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Darker box shadow */
+            padding: 20px;
+            text-align: center;
+        }
+
+        #join-form input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+            background-color: #2c3e50; /* Dark background color for input */
+            color: #ecf0f1; /* Light text color for input */
+            border: 1px solid #34495e; /* Darker border color */
+            border-radius: 4px;
+        }
+
+        #join-form input[type="submit"],
+        #start-call-btn {
+            background-color: #3498db; /* Dark blue button color */
+            color: #ecf0f1; /* Light text color for button */
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            border: none;
+            border-radius: 4px;
+            padding: 10px;
+            width: 100%;
+        }
+
+        #join-form input[type="submit"]:hover,
+        #start-call-btn:hover {
+            background-color: #2980b9; /* Darker blue on hover */
+
+        }
+        #footer {
+            text-align: center;
+            padding: 10px;
+            background-color: #34495e; /* Darker footer background color */
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            color: #ecf0f1; /* Light text color for footer */
+            margin-top: 50px; /* Adjust margin to position the footer */
+        }
+        
+    </style>
+</head>
+<body>
+    <main id="lobby-container">
+        <form id="join-form">
+            <h2 style="color: #ecf0f1;">Join or Start a Call</h2>
+            <input type="text" name="invite_link" placeholder="Enter Invite Code" required>
+            <input type="submit" value="Join Room">
+            <button id="start-call-btn" type="button">Start a Call</button>
+        </form>
+       
+    </main>
+    <footer id="footer">
+        videocall-project by Gift Jeremiah. 
+        <a href="https://ng.linkedin.com/in/gift-jeremiah-1a413024b" style="color: #ecf0f1; text-decoration: underline;" target="_blank">LinkedIn</a>
+        | 
+        <a href="https://github.com/giftthedeveloper" style="color: #ecf0f1; text-decoration: underline;" target="_blank">GitHub Repo</a>
+    </footer>
+    
+    <script>
+        document.getElementById('join-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            let inviteCode = e.target.invite_link.value;
+          
+            window.location = `index.html?room=${inviteCode}`;
+            
+        });
+
+        document.getElementById('start-call-btn').addEventListener('click', () => {
+            const randomRoomId = Math.random().toString(36).substring(2, 14);
+            window.location = `index.html?room=${randomRoomId}`;
+        });
+    </script>
+</body>
+</html>
