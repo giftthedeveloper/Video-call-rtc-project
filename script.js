@@ -99,10 +99,14 @@
         closeBtnContainer.className = 'close-btn-container';
     
         const closeBtn = document.createElement('button');
+        closeBtn.id = 'close-btn'; 
         closeBtn.className = 'close-btn';
         closeBtn.innerHTML = '&times;';
         console.log("Close button: ", closeBtn);
-        closeBtn.addEventListener('click', closePopUp);
+        closeBtn.addEventListener('click', () => {
+            console.log("Close button clicked");
+            closePopUp();
+        });
 
         // Add closeBtn directly to popUpContent
         popUpContent.appendChild(closeBtn);
@@ -124,6 +128,7 @@
         popUp.appendChild(popUpContent);
     
         document.body.appendChild(popUp);
+        document.getElementById('close-btn').addEventListener('click', closePopUp);
     };
     
     
@@ -294,7 +299,7 @@
     window.addEventListener('beforeunload', leaveChannel)
     document.getElementById('camera-btn').addEventListener('click', toggleCamera)
     document.getElementById('mic-btn').addEventListener('click', toggleMic)
-    
+
     init()
     
     
