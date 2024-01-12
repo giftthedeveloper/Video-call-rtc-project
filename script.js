@@ -1,17 +1,24 @@
+const io = require('socket.io-client'); 
+console.log("start")   
+import { v4 as uuidv4 } from 'uuid';
+const uid = uuidv4();
+    
     let localStream;
     const app_id = "438b0a9bb09b4df992cad2765963018d"
     const token = null; 
-    const uid = String(Math.floor(Math.random() * 10000 ))
+    // const uid = String(Math.floor(Math.random() * 10000 ))
     let client
     let channel;
     let queryString = window.location.search
     let urlParams = new URLSearchParams(queryString)
     let roomId = urlParams.get('room')
-    // const io = require('socket.io-client');    
+    console.log("passed import statement")
     let audioTrack
 
 
 // const socket = io('https://api-video-call-by-gift.onrender.com');
+    const socket = io('http://127.0.0.1:3000');
+
     if (!roomId){
         window.location = 'lobby.html'
     }
@@ -23,46 +30,32 @@
         ]
     }
     
-    const init = async() => {
-        // socket.on('connect', () => {
-        //     socket.emit('joinRoom', { room: roomId});
-        //     console.log(`Connected as ${userId}`);
-        //   });
+const init = async() => {
+    // client = await AgoraRTM.createInstance(app_id)
+    // await client.login({uid, token})
 
-        // socket.on('disconnect', () => {
-        // console.log('Disconnected from the WebSocket server');
-        // });
-        
-        // socket.on('error', (error) => {
-        // console.error('WebSocket error:', error);
-        // });
-          
-        // // channel = client.createChannel(roomId)
-        // // channel = client.createChannel('main')
-        // // await channel.join()
-    
-        // socket.on('MemberJoined', () => {
+    socket.emit('joinRoom', { room: roomId, userId: uid });
 
-        // })
-
-        // socket.on('MemberLeft', () => {
-
-        // })
-        // socket.on('MessageFromPeer', () => {
-
-        // })
-    
-        client = await AgoraRTM.createInstance(app_id)
-        await client.login({uid, token})
-    
-        channel = client.createChannel(roomId)
+        // channel = client.createChannel(roomId)
         // channel = client.createChannel('main')
-        await channel.join()
+        // await channel.join()
+        // channel.on('MemberJoined', handleUserJoined)
+        // channel.on('MemberLeft', handleUserLeft)
+        // client.on('MessageFromPeer', handleMessageFromPeer)
     
-        channel.on('MemberJoined', handleUserJoined)
-        channel.on('MemberLeft', handleUserLeft)
-        client.on('MessageFromPeer', handleMessageFromPeer)
+    socket.on('roomMemberJoined', (data) => {
+        handleUserJoined(data.userId);
+    });
     
+    //this still needs work
+    socket.on('memberLeft', (data) => {
+        handleUserLeft(data.userId);
+    });
+    
+    socket.on('messageFromPeer', (data) => {
+        handleMessageFromPeer(data.content, data.userId);
+    });
+        
         localStream = await navigator.mediaDevices.getUserMedia({video:true, audio:true}) 
         document.getElementById('client-1').srcObject = localStream
         
@@ -220,8 +213,9 @@
         const offer = await peerConnection.createOffer()
         await peerConnection.setLocalDescription(offer)
         //websocket to send message to peer
-        client.sendMessageToPeer({text: JSON.stringify({'type': 'offer', 'offer': offer})}, MemberId)
-        // console.log('Offer:', offer)
+        // client.sendMessageToPeer({text: JSON.stringify({'type': 'offer', 'offer': offer})}, MemberId)
+        socket.emit('sendMessage', {content: offer, type: 'offer', room: roomId, userId: MemberId});
+          
     }
     
     const createAnswer = async (MemberId, offer) => {
@@ -231,7 +225,9 @@
     
         const answer = await peerConnection.createAnswer()
         await peerConnection.setLocalDescription(answer)
-        client.sendMessageToPeer({text: JSON.stringify({'type': 'answer', 'answer': answer})}, MemberId)
+        // client.sendMessageToPeer({text: JSON.stringify({'type': 'answer', 'answer': answer})}, MemberId)
+        socket.emit('sendMessage', {content: anwer, type: 'answer', room: roomId, userId: MemberId});
+
     
     }
     
