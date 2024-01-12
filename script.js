@@ -1,27 +1,27 @@
-const io = require('socket.io-client'); 
 console.log("start")   
-import { v4 as uuidv4 } from 'uuid';
+const io = require('socket.io-client'); 
+console.log("startb")   
+const { v4: uuidv4 } = require('uuid');
 const uid = uuidv4();
-    
-    let localStream;
-    const app_id = "438b0a9bb09b4df992cad2765963018d"
-    const token = null; 
-    // const uid = String(Math.floor(Math.random() * 10000 ))
-    let client
-    let channel;
-    let queryString = window.location.search
-    let urlParams = new URLSearchParams(queryString)
-    let roomId = urlParams.get('room')
-    console.log("passed import statement")
-    let audioTrack
+console.log("passed")
+let localStream;
+let client
+let channel;
+let queryString = window.location.search
+let urlParams = new URLSearchParams(queryString)
+let roomId = urlParams.get('room')
+console.log("passed import statement")
+let audioTrack
 
 
 // const socket = io('https://api-video-call-by-gift.onrender.com');
-    const socket = io('http://127.0.0.1:3000');
 
     if (!roomId){
         window.location = 'lobby.html'
+    
     }
+    const socket = io('http://127.0.0.1:3001');
+
     const servers = {
         iceServers:[
             {
@@ -31,24 +31,14 @@ const uid = uuidv4();
     }
     
 const init = async() => {
-    // client = await AgoraRTM.createInstance(app_id)
-    // await client.login({uid, token})
-
     socket.emit('joinRoom', { room: roomId, userId: uid });
 
-        // channel = client.createChannel(roomId)
-        // channel = client.createChannel('main')
-        // await channel.join()
-        // channel.on('MemberJoined', handleUserJoined)
-        // channel.on('MemberLeft', handleUserLeft)
-        // client.on('MessageFromPeer', handleMessageFromPeer)
-    
     socket.on('roomMemberJoined', (data) => {
         handleUserJoined(data.userId);
     });
     
     //this still needs work
-    socket.on('memberLeft', (data) => {
+    socket.on('roomMemberLeft', (data) => {
         handleUserLeft(data.userId);
     });
     
@@ -198,7 +188,10 @@ const init = async() => {
         peerConnection.onicecandidate = async (event) => {
             if(event.candidate) {
                 //websocket to send icecandidates
-                client.sendMessageToPeer({text: JSON.stringify({'type': 'candidate', 'candidate': event.candidate})}, MemberId)
+
+                // client.sendMessageToPeer({text: JSON.stringify({'type': 'candidate', 'candidate': event.candidate})}, MemberId)
+                socket.emit('sendMessage', {content: event.candidate, type: 'candidate', room: roomId, userId: MemberId});
+
     
             }
         }
